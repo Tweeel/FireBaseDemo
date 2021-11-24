@@ -62,7 +62,6 @@ public class RegisterActivity extends AppCompatActivity {
                     startActivity(new Intent(RegisterActivity.this,MainActivity.class));
                     finish();
                 }
-
                 else
                     Toast.makeText(RegisterActivity.this,"Registeration faild!",Toast.LENGTH_SHORT).show();
             }
