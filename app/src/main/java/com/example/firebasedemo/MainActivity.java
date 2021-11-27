@@ -68,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this,"date sended!",Toast.LENGTH_SHORT).show();
                         }
                     });
-//                    FirebaseDatabase.getInstance().getReference().child("User").push().child("name").setValue(txt_name);
-
                 }
             }
         });
