@@ -2,8 +2,6 @@ package com.example.firebasedemo;
 
 import static android.text.TextUtils.isEmpty;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,10 +10,19 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,8 +40,11 @@ public class MainActivity extends AppCompatActivity {
         edit = findViewById(R.id.editTextTextPersonName);
         listView = findViewById(R.id.data);
 
-        logout.setOnClickListener(new View.OnClickListener(){
+        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+        Map<String,String> userMap = new HashMap<>();
 
+
+        logout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
@@ -51,19 +61,18 @@ public class MainActivity extends AppCompatActivity {
                 if(isEmpty(txt_name))
                     Toast.makeText(MainActivity.this,"No Name Entred!",Toast.LENGTH_SHORT).show();
                 else{
-                    FirebaseDatabase.getInstance().getReference().child("ProgrammingKnowledge").child("Name").setValue(txt_name);
-                    Toast.makeText(MainActivity.this,"Data added!",Toast.LENGTH_SHORT).show();
-                }
+                    userMap.put("name",txt_name);
+                    mFirestore.collection("Users").add(userMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>(){
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Toast.makeText(MainActivity.this,"date sended!",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+//                    FirebaseDatabase.getInstance().getReference().child("User").push().child("name").setValue(txt_name);
 
+                }
             }
         });
-//        add multiple data to the data base as a hash map
-//        HashMap<String,Object> map = new HashMap<>();
-//        map.put("Name","houssem");
-//        map.put("Email","houssembababendermel@gmail.com");
-//        FirebaseDatabase.getInstance().getReference().child("ProgrammingKnowledge").child("MultipleValues").updateChildren(map);
 
-//        to add only one single data
-//        FirebaseDatabase.getInstance().getReference().child("ProgrammingKnowledge").child("android").setValue("abcd");
     }
 }
