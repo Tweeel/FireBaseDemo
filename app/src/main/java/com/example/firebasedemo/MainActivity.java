@@ -5,6 +5,7 @@ import static android.text.TextUtils.isEmpty;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.data);
 
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-        Map<String,String> userMap = new HashMap<>();
-
 
         logout.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -61,16 +61,27 @@ public class MainActivity extends AppCompatActivity {
                 if(isEmpty(txt_name))
                     Toast.makeText(MainActivity.this,"No Name Entred!",Toast.LENGTH_SHORT).show();
                 else{
-                    userMap.put("name",txt_name);
-                    mFirestore.collection("Users").add(userMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>(){
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Toast.makeText(MainActivity.this,"date sended!",Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    /* Write a message to the realtime database*/
+//                    Map<String,String> userMap = new HashMap<>();
+//                    userMap.put("name",txt_name);
+//                    mFirestore.collection("Users").add(userMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>(){
+//                        @Override
+//                        public void onSuccess(DocumentReference documentReference) {
+//                            Toast.makeText(MainActivity.this,"date sended!",Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+
+                    /* Write a message to the firestore database*/
+                    FirebaseDatabase database = FirebaseDatabase.getInstance("https://fir-demo-88800-default-rtdb.europe-west1.firebasedatabase.app/");
+                    DatabaseReference myRef = database.getReference();
+                    myRef.child("ProgrammingKnowledge").push().child("Name").setValue(txt_name);
+
+                    Toast.makeText(MainActivity.this,"date sended!",Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
+        ArrayList<String> list = new ArrayList<>();
+        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.list_item,list);
+        listView.setAdapter(adapter);
     }
 }
